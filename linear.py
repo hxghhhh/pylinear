@@ -28,12 +28,35 @@ def get_issue_branches():
 
     query = gql('''
         query { 
-            issues(first: 10) { nodes { title number previousIdentifiers } } 
             teams { nodes { key } } 
-            organization { gitBranchFormat } }   
+            organization { gitBranchFormat } 
+            viewer {
+                id
+                name
+                email
+                assignedIssues (first: 10) { nodes { title number previousIdentifiers } } 
+            }
+        }
     ''')
 
-    print(client.execute(query))
+    # Get format
+    data = client.execute(query)
+    branch_format = data.get('organization').get('gitBranchFormat')
+    team_key = data.get('teams').get('nodes')[0].get('key')
+    print(data)
+    print(branch_format)
+    
+    # Build issueIdentifier
+    for issue in data.get('viewer').get('assignedIssues').get('nodes'):
+        title = issue.get('title').replace(' ', '-').replace('/', '')
+        number = issue.get('number')
+        print(f'{team_key}-{number}-{title}'.lower())
+
+    # Build issueTitle
+    #branch_format.format()
+    
+
+    # print(client.execute(query))
 
 if __name__ == '__main__':
     cli()
