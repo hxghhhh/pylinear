@@ -1,13 +1,39 @@
 import click
+from gql import gql, Client
+from gql.transport.requests import RequestsHTTPTransport
 
-@click.command()
-@click.option("--count", default=1, help="Number of greetings.")
-@click.option("--name", prompt="Your name", help="The person to greet.")
-def hello(count, name):
-    """Simple program that greets NAME for a total of COUNT times."""
-    for _ in range(count):
-        click.echo(f"Hello, {name}!")
-
+# reference: https://click.palletsprojects.com/en/7.x/quickstart/#echoing
+@click.group()
 def cli():
     """An example application that supports aliases."""
-    hello()
+    pass
+
+@cli.command()
+def get_issue_branches():
+    sample_transport=RequestsHTTPTransport(
+        url='https://api.linear.app/graphql',
+        use_json=True,
+        headers={
+            "Content-type": "application/json",
+            "Authorization": "V4HEChjkzfY0kCWIQolWmiY2XS220M2FhCU1NFzm"
+        },
+        verify=False
+    )
+
+    client = Client(
+        retries=3,
+        transport=sample_transport,
+        fetch_schema_from_transport=True,
+    )
+
+    query = gql('''
+        query { 
+            issues(first: 10) { nodes { title number previousIdentifiers } } 
+            teams { nodes { key } } 
+            organization { gitBranchFormat } }   
+    ''')
+
+    print(client.execute(query))
+
+if __name__ == '__main__':
+    cli()
