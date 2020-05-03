@@ -5,7 +5,7 @@ from gql.transport.requests import RequestsHTTPTransport
 # reference: https://click.palletsprojects.com/en/7.x/quickstart/#echoing
 @click.group()
 def cli():
-    """An example application that supports aliases."""
+    """A python cli tool to interface with linear.app instance"""
     pass
 
 @cli.command()
