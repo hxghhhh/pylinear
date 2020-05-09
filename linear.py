@@ -43,8 +43,6 @@ def get_issue_branches():
     data = client.execute(query)
     branch_format = data.get('organization').get('gitBranchFormat')
     team_key = data.get('teams').get('nodes')[0].get('key')
-    print(data)
-    print(branch_format)
     
     # Build issueIdentifier
     for issue in data.get('viewer').get('assignedIssues').get('nodes'):
