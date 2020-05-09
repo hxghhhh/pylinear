@@ -24,19 +24,19 @@ def get_issue_branches():
     )
 
     client = Client(
-        retries=3, transport=sample_transport, fetch_schema_from_transport=True,
+        retries=3, transport=sample_transport, fetch_schema_from_transport=True
     )
 
     query = gql(
         """
-        query { 
-            teams { nodes { key } } 
-            organization { gitBranchFormat } 
+        query {
+            teams { nodes { key } }
+            organization { gitBranchFormat }
             viewer {
                 id
                 name
                 email
-                assignedIssues (first: 10) { nodes { title number previousIdentifiers } } 
+                assignedIssues (first: 10) { nodes { title number previousIdentifiers } }
             }
         }
     """
@@ -53,24 +53,20 @@ def get_issue_branches():
         title = issue.get("title").replace(" ", "-").replace("/", "")
         number = issue.get("number")
         issues.append(f"{team_key}-{number}-{title}".lower())
-    
+
     questions = [
-        inquirer.List(
-            "issue",
-            message="What task are you working on?",
-            choices=issues,
-        ),
+        inquirer.List("issue", message="What task are you working on?", choices=issues)
     ]
 
-
     answers = inquirer.prompt(questions)
-    issue_selected = answers.get('issue')
+    issue_selected = answers.get("issue")
 
     # Create this branch
     os.system(f"git checkout -b {issue_selected}")
-    
+
     # Sync with gh
     os.system(f"gh pr create {issue_selected}")
+
 
 # Build issueTitle
 # branch_format.format()
