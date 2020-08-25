@@ -67,11 +67,5 @@ def get_issue_branches():
     # Sync with gh
     os.system(f"gh pr create {issue_selected}")
 
-
-# Build issueTitle
-# branch_format.format()
-
-# print(client.execute(query))
-
 if __name__ == "__main__":
     cli()
